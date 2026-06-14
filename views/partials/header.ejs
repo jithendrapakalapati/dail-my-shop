@@ -1,0 +1,75 @@
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="logo">
+      <span class="logo-icon">🛍</span>
+      <span class="logo-text">AI<strong>Shop</strong></span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="/catalog" class="nav-link">All Products</a>
+      <% categories.forEach(cat => { %>
+      <a href="/catalog/<%= cat.slug %>" class="nav-link">
+        <span class="nav-icon"><%= cat.icon %></span> <%= cat.name %>
+      </a>
+      <% }) %>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn-icon search-toggle" id="searchToggle" aria-label="Search">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+      </button>
+      <div class="cart-icon-wrap">
+        <button class="btn-icon" id="cartToggle" aria-label="Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+        </button>
+      </div>
+      <button class="btn-icon nav-toggle" id="navToggle" aria-label="Menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="search-bar-wrap" id="searchBarWrap">
+    <div class="container">
+      <form action="/search" method="get" class="search-form">
+        <input type="search" name="q" placeholder="Search products, brands…"
+               value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>"
+               autocomplete="off" class="search-input" id="searchInput">
+        <button type="submit" class="btn btn-primary search-btn">Search</button>
+      </form>
+    </div>
+  </div>
+</header>
+
+<!-- Cart overlay -->
+<div class="cart-overlay" id="cartOverlay"></div>
+
+<!-- Cart drawer -->
+<aside class="cart-drawer" id="cartDrawer" aria-label="Shopping cart">
+  <div class="cart-drawer-header">
+    <h2>Your Cart (<span id="cartItemCount">0</span>)</h2>
+    <button class="cart-close-btn" id="cartClose" aria-label="Close cart">&#x2715;</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-drawer-footer" id="cartDrawerFooter">
+    <div class="cart-summary-row">
+      <span class="label">Subtotal</span>
+      <span id="cartSubtotal">$0.00</span>
+    </div>
+    <div class="cart-summary-row">
+      <span class="label">Shipping</span>
+      <span id="cartShipping">Calculated at checkout</span>
+    </div>
+    <a href="/checkout" class="btn btn-primary cart-checkout-btn">Proceed to Checkout &rarr;</a>
+    <button class="cart-continue-btn" id="cartContinueBtn">Continue Shopping</button>
+  </div>
+</aside>

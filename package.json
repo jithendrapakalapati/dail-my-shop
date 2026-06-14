@@ -1,0 +1,20 @@
+{
+  "name": "ai-shop-storefront",
+  "version": "1.0.0",
+  "description": "AI-powered e-commerce storefront — publicly accessible product catalog",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "db:setup": "node db/setup.js",
+    "db:seed": "node db/seed.js",
+    "db:reset": "node db/setup.js && node db/seed.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "pg": "^8.12.0"
+  }
+}

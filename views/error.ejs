@@ -1,0 +1,19 @@
+<%- include('partials/head', { title, description: description || '', baseUrl, product: null, currentCategory: null }) %>
+<body>
+<%- include('partials/header', { categories: [], searchQuery: '' }) %>
+
+<main class="section">
+  <div class="container error-page">
+    <div class="error-code"><%= status %></div>
+    <h1><%= status === 404 ? 'Page Not Found' : 'Something went wrong' %></h1>
+    <p><%= message %></p>
+    <div class="error-actions">
+      <a href="/" class="btn btn-primary">Go Home</a>
+      <a href="/catalog" class="btn btn-outline">Browse Products</a>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+</body>
+</html>

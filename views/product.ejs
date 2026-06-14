@@ -1,0 +1,192 @@
+<%- include('partials/head', { title, description, baseUrl, product, currentCategory: null }) %>
+<body>
+<%- include('partials/header', { categories, searchQuery: '' }) %>
+
+<main>
+  <div class="container">
+
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span>›</span>
+      <a href="/catalog">All Products</a>
+      <span>›</span>
+      <% if (product.cat_slug) { %>
+      <a href="/catalog/<%= product.cat_slug %>"><%= product.category_name %></a>
+      <span>›</span>
+      <% } %>
+      <span><%= product.name %></span>
+    </nav>
+
+    <!-- Product detail -->
+    <div class="product-detail">
+      <!-- Image panel -->
+      <div class="product-gallery">
+        <div class="product-main-image">
+          <img src="<%= product.image_url %>"
+               alt="<%= product.name %>"
+               id="mainImage"
+               width="600" height="600"
+               onerror="this.src='/images/placeholder.svg'">
+        </div>
+        <% if (product.compare_at_price && parseFloat(product.compare_at_price) > parseFloat(product.price)) { %>
+        <div class="product-gallery-badges">
+          <span class="badge badge-sale badge-lg">
+            SAVE <%= Math.round((1 - parseFloat(product.price)/parseFloat(product.compare_at_price))*100) %>%
+          </span>
+        </div>
+        <% } %>
+        <% if (product.is_new) { %>
+        <div class="product-gallery-badges">
+          <span class="badge badge-new badge-lg">New Arrival</span>
+        </div>
+        <% } %>
+      </div>
+
+      <!-- Info panel -->
+      <div class="product-info">
+        <div class="product-info-brand">
+          <span class="product-brand-badge"><%= product.brand %></span>
+          <% if (product.cat_slug) { %>
+          <a href="/catalog/<%= product.cat_slug %>" class="product-category-link">
+            <%= product.category_name %>
+          </a>
+          <% } %>
+        </div>
+
+        <h1 class="product-title"><%= product.name %></h1>
+
+        <% if (product.review_count > 0) { %>
+        <div class="product-rating-bar">
+          <span class="stars-full">
+            <% for(let s=1; s<=5; s++) { %>
+              <span class="star <%= s <= Math.round(product.rating) ? 'filled' : '' %>">★</span>
+            <% } %>
+          </span>
+          <span class="rating-num"><%= parseFloat(product.rating).toFixed(1) %></span>
+          <span class="rating-count">(<%= product.review_count.toLocaleString() %> reviews)</span>
+        </div>
+        <% } %>
+
+        <div class="product-pricing">
+          <span class="product-price-lg">$<%= parseFloat(product.price).toFixed(2) %></span>
+          <% if (product.compare_at_price && parseFloat(product.compare_at_price) > parseFloat(product.price)) { %>
+          <span class="product-compare-price-lg">$<%= parseFloat(product.compare_at_price).toFixed(2) %></span>
+          <span class="product-savings">
+            Save $<%= (parseFloat(product.compare_at_price) - parseFloat(product.price)).toFixed(2) %>
+          </span>
+          <% } %>
+        </div>
+
+        <p class="product-short-desc-lg"><%= product.short_description %></p>
+
+        <!-- Availability -->
+        <div class="product-availability <%= product.in_stock ? 'in-stock' : 'out-of-stock' %>">
+          <span class="availability-dot"></span>
+          <%= product.in_stock ? 'In Stock' : 'Out of Stock' %>
+          <% if (product.in_stock && product.stock_quantity < 10) { %>
+          <span class="low-stock"> — Only <%= product.stock_quantity %> left!</span>
+          <% } %>
+        </div>
+
+        <% if (product.sku) { %>
+        <p class="product-sku">SKU: <code><%= product.sku %></code></p>
+        <% } %>
+
+        <!-- CTA buttons -->
+        <div class="product-cta">
+          <button class="btn btn-primary btn-xl"
+                  id="addToCartBtn"
+                  data-product-id="<%= product.id %>"
+                  data-name="<%= product.name.replace(/"/g, '&quot;') %>"
+                  data-price="<%= product.price %>"
+                  data-image="<%= product.image_url %>"
+                  data-slug="<%= product.slug %>"
+                  <%= !product.in_stock ? 'disabled' : '' %>>
+            <%= product.in_stock ? '🛒 Add to Cart' : 'Out of Stock' %>
+          </button>
+          <button class="btn btn-outline btn-xl">&#9825; Save</button>
+        </div>
+
+        <!-- Trust mini-badges -->
+        <div class="product-trust">
+          <span>🚚 Free shipping over $50</span>
+          <span>↩️ 30-day returns</span>
+          <span>🔒 Secure checkout</span>
+        </div>
+
+        <!-- Attributes -->
+        <% if (product.attributes && Object.keys(JSON.parse(typeof product.attributes === 'string' ? product.attributes : JSON.stringify(product.attributes))).length > 0) { %>
+        <%
+          const attrs = typeof product.attributes === 'string' ? JSON.parse(product.attributes) : product.attributes;
+          const attrKeys = Object.keys(attrs).filter(k => k !== 'available_sizes');
+        %>
+        <% if (attrKeys.length > 0) { %>
+        <div class="product-attributes">
+          <h3>Specifications</h3>
+          <table class="attr-table">
+            <% attrKeys.forEach(key => { %>
+            <tr>
+              <th><%= key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) %></th>
+              <td>
+                <%
+                  const v = attrs[key];
+                  if (Array.isArray(v)) {
+                %>
+                  <%= v.join(', ') %>
+                <% } else if (typeof v === 'boolean') { %>
+                  <%= v ? '✓ Yes' : '✗ No' %>
+                <% } else { %>
+                  <%= v %>
+                <% } %>
+              </td>
+            </tr>
+            <% }) %>
+          </table>
+        </div>
+        <% } %>
+
+        <!-- Available sizes if present -->
+        <% if (attrs.available_sizes && attrs.available_sizes.length > 0) { %>
+        <div class="product-sizes">
+          <h3>Available Sizes</h3>
+          <div class="size-grid">
+            <% attrs.available_sizes.forEach(size => { %>
+            <span class="size-chip"><%= size %></span>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+        <% } %>
+      </div>
+    </div>
+
+    <!-- Full description -->
+    <% if (product.description) { %>
+    <section class="product-description-section">
+      <h2>About this product</h2>
+      <p class="product-description-text"><%= product.description %></p>
+    </section>
+    <% } %>
+
+    <!-- Related products -->
+    <% if (relatedProducts.length > 0) { %>
+    <section class="section related-section">
+      <div class="section-header">
+        <h2>More in <%= product.category_name %></h2>
+        <a href="/catalog/<%= product.cat_slug %>" class="section-link">View all →</a>
+      </div>
+      <div class="products-grid products-grid-4">
+        <% relatedProducts.forEach(p => { %>
+          <%- include('partials/product-card', { product: p }) %>
+        <% }) %>
+      </div>
+    </section>
+    <% } %>
+
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+</body>
+</html>
