@@ -90,9 +90,6 @@ function resolveSort(sort) {
   }[sort] || 'p.is_featured DESC, p.created_at DESC';
 }
 
-// ── AI Commerce extension ─────────────────────────────────────────────────────
-app.use('/api/ai-commerce', require('./routes/ai-commerce'));
-
 // ── API ───────────────────────────────────────────────────────────────────────
 
 // GET /api/categories
@@ -174,67 +171,6 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
-// GET /api/feed — structured product feed for AI agents and crawlers
-app.get('/api/feed', async (req, res) => {
-  try {
-    const [products, categories] = await Promise.all([
-      pool.query(`SELECT p.*, c.name AS category_name FROM shop_products p LEFT JOIN shop_categories c ON p.category_id = c.id ORDER BY p.category_id, p.name`),
-      pool.query('SELECT * FROM shop_categories ORDER BY sort_order'),
-    ]);
-
-    res.json({
-      '@context': 'https://schema.org',
-      '@type': 'ItemList',
-      name: 'AI Shop Product Catalog',
-      description: 'Complete product catalog — shoes, shirts, mobile phones & accessories',
-      url: BASE_URL,
-      numberOfItems: products.rows.length,
-      itemListElement: products.rows.map((p, i) => ({
-        '@type': 'ListItem',
-        position: i + 1,
-        item: {
-          '@type': 'Product',
-          '@id': `${BASE_URL}/product/${p.slug}`,
-          name: p.name,
-          description: p.short_description,
-          brand: { '@type': 'Brand', name: p.brand },
-          sku: p.sku,
-          image: p.image_url,
-          url: `${BASE_URL}/product/${p.slug}`,
-          category: p.category_name,
-          offers: {
-            '@type': 'Offer',
-            price: p.price,
-            priceCurrency: 'USD',
-            availability: p.in_stock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-          },
-          aggregateRating: p.review_count > 0 ? {
-            '@type': 'AggregateRating',
-            ratingValue: p.rating,
-            reviewCount: p.review_count,
-          } : undefined,
-        },
-      })),
-      categories: categories.rows.map(c => ({
-        name: c.name,
-        slug: c.slug,
-        icon: c.icon,
-        url: `${BASE_URL}/catalog/${c.slug}`,
-        productCount: c.product_count,
-      })),
-      merchant: {
-        name: 'AI Shop',
-        url: BASE_URL,
-        currency: 'USD',
-        locale: 'en-US',
-      },
-      generatedAt: new Date().toISOString(),
-    });
-  } catch (err) {
-    res.status(500).json({ error: 'Feed generation failed' });
-  }
-});
-
 // ── Page routes ───────────────────────────────────────────────────────────────
 
 // GET /catalog  or  GET /catalog/:category
@@ -273,7 +209,7 @@ app.get(['/catalog', '/catalog/:category'], async (req, res) => {
 
     const total = parseInt(countRes.rows[0].count, 10);
     res.render('catalog', {
-      title: currentCategory ? `${currentCategory.name} — AI Shop` : 'All Products — AI Shop',
+      title: currentCategory ? `${currentCategory.name} — Shop` : 'All Products — Shop',
       description: currentCategory
         ? `Shop our ${currentCategory.name} collection`
         : 'Browse our complete product catalog — shoes, shirts, phones & accessories',
@@ -319,7 +255,7 @@ app.get('/product/:slug', async (req, res) => {
     ]);
 
     res.render('product', {
-      title: `${product.name} — AI Shop`,
+      title: `${product.name} — Shop`,
       description: product.meta_description || product.short_description || `Buy ${product.name} from ${product.brand}`,
       categories,
       product,
@@ -344,7 +280,7 @@ app.get('/checkout', async (req, res) => {
   try {
     const categories = await getCategories();
     res.render('checkout', {
-      title: 'Checkout — AI Shop',
+      title: 'Checkout — Shop',
       description: 'Complete your purchase',
       categories,
       baseUrl: BASE_URL,
@@ -429,7 +365,7 @@ app.get('/order/:id', async (req, res) => {
     );
 
     res.render('order-confirmation', {
-      title: `Order ${order.order_number} — AI Shop`,
+      title: `Order ${order.order_number} — Shop`,
       description: 'Your order has been placed successfully',
       categories,
       order,
@@ -488,12 +424,11 @@ app.get('/_health', async (req, res) => {
 
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log('\n🛍   AI Shop Storefront');
+  console.log('\n🛍   Shop Storefront');
   console.log('──────────────────────────────');
   console.log(`  Homepage:  ${BASE_URL}/`);
   console.log(`  Catalog:   ${BASE_URL}/catalog`);
   console.log(`  API:       ${BASE_URL}/api/products`);
-  console.log(`  Feed:      ${BASE_URL}/api/feed`);
   console.log(`  Sitemap:   ${BASE_URL}/sitemap.xml`);
   console.log('──────────────────────────────\n');
 });

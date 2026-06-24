@@ -1,7 +1,7 @@
 {
-  "name": "ai-shop-storefront",
+  "name": "shop-storefront",
   "version": "1.0.0",
-  "description": "AI-powered e-commerce storefront — publicly accessible product catalog",
+  "description": "Native e-commerce storefront — publicly accessible product catalog",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

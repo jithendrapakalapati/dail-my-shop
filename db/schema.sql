@@ -1,4 +1,4 @@
--- AI Shop custom storefront schema
+-- Shop custom storefront schema
 -- Tables are prefixed with shop_ to avoid conflicts with the Evershop schema.
 
 DROP TABLE IF EXISTS shop_product_images CASCADE;
