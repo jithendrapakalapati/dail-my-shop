@@ -1,0 +1,79 @@
+<%- include('partials/head', { title, description, baseUrl, product: null, currentCategory: null }) %>
+<body>
+<%- include('partials/header', { categories, searchQuery: '' }) %>
+
+<main>
+  <div class="container">
+    <div class="order-confirm-wrap">
+
+      <div class="order-confirm-icon">&#127881;</div>
+      <h1>Order Confirmed!</h1>
+      <p class="order-num">Order <strong>#<%= order.order_number %></strong></p>
+
+      <p style="color:var(--text-muted);margin-bottom:2rem;font-size:.9375rem;">
+        Thank you, <strong><%= order.customer_name %></strong>!
+        A confirmation will be sent to <strong><%= order.customer_email %></strong>.
+      </p>
+
+      <!-- Items -->
+      <div class="order-detail-card">
+        <h3>Order Items</h3>
+        <div class="order-items-list">
+          <% items.forEach(function(item) { %>
+          <div class="order-item-row">
+            <span class="oi-name">
+              <%= item.product_name %>
+              <% if (item.size) { %>
+                <span style="color:var(--text-muted)"> (Size <%= item.size %>)</span>
+              <% } %>
+            </span>
+            <span class="oi-qty">&times; <%= item.quantity %></span>
+            <span class="oi-price">$<%= parseFloat(item.line_total).toFixed(2) %></span>
+          </div>
+          <% }) %>
+        </div>
+        <div class="order-totals-row">
+          <span>Subtotal</span>
+          <span>$<%= parseFloat(order.items_total).toFixed(2) %></span>
+        </div>
+        <div class="order-totals-row">
+          <span>Shipping</span>
+          <span><%= parseFloat(order.shipping_total) === 0 ? 'Free' : '$' + parseFloat(order.shipping_total).toFixed(2) %></span>
+        </div>
+        <div class="order-totals-row grand">
+          <span>Total</span>
+          <span>$<%= parseFloat(order.grand_total).toFixed(2) %></span>
+        </div>
+      </div>
+
+      <!-- Shipping address -->
+      <%
+        var addr = order.shipping_address;
+        if (typeof addr === 'string') { try { addr = JSON.parse(addr); } catch(e) { addr = {}; } }
+      %>
+      <div class="order-detail-card">
+        <h3>Shipping To</h3>
+        <p style="font-size:.9375rem;line-height:1.8">
+          <%= addr.line1 %>
+          <% if (addr.line2) { %><br><%= addr.line2 %><% } %>
+          <br><%= addr.city %>, <%= addr.state %> <%= addr.zip %>
+          <br><%= addr.country %>
+        </p>
+      </div>
+
+      <p style="color:var(--text-muted);font-size:.875rem;margin-bottom:1.75rem;">
+        &#x1F69A; Estimated delivery: 3&ndash;7 business days
+      </p>
+
+      <div class="order-confirm-actions">
+        <a href="/catalog" class="btn btn-primary">Continue Shopping</a>
+        <a href="/" class="btn btn-outline">Back to Home</a>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
+</body>
+</html>

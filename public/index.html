@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Shop — Shoes, Shirts, Phones &amp; Accessories</title>
+  <meta name="description" content="Shop the latest shoes, shirts, mobile phones, and accessories. No account required — browse and buy instantly.">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AI Shop — Shoes, Shirts, Phones &amp; Accessories">
+  <meta property="og:description" content="Shop the latest shoes, shirts, mobile phones, and accessories. No account required — browse and buy instantly.">
+  <meta property="og:site_name" content="AI Shop">
+  <meta property="og:url" content="/">
+  <meta name="google-site-verification" content="K0kT0MBYGqs99Nh3Ja3g-TPCqmjSP30DfvZhAz10xDY" />
+  <link rel="canonical" href="/">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="preconnect" href="https://images.unsplash.com">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">
+        <span class="logo-icon">🛍</span>
+        <span class="logo-text">AI<strong>Shop</strong></span>
+      </a>
+      <nav class="main-nav" id="mainNav">
+        <a href="/catalog" class="nav-link">All Products</a>
+      </nav>
+      <div class="header-actions">
+        <button class="btn-icon search-toggle" id="searchToggle" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+        <button class="btn-icon nav-toggle" id="navToggle" aria-label="Menu">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="search-bar-wrap" id="searchBarWrap">
+      <div class="container">
+        <form action="/search" method="get" class="search-form">
+          <input type="search" name="q" placeholder="Search products, brands…"
+                 autocomplete="off" class="search-input" id="searchInput">
+          <button type="submit" class="btn btn-primary search-btn">Search</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Shop Freely.<br>Discover More.</h1>
+        <p>Shoes, shirts, phones &amp; accessories — all publicly accessible for you and AI agents alike.</p>
+        <div class="hero-cta">
+          <a href="/catalog" class="btn btn-primary btn-lg">Browse All Products</a>
+          <a href="/api/feed" class="btn btn-ghost btn-lg">Product Feed (JSON-LD)</a>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong id="statCategories">—</strong><span>Categories</span></div>
+        <div class="stat"><strong>28+</strong><span>Products</span></div>
+        <div class="stat"><strong>$0</strong><span>Login fee</span></div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="section categories-section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Shop by Category</h2>
+          <a href="/catalog" class="section-link">View all →</a>
+        </div>
+        <div class="categories-grid" id="categoriesGrid"></div>
+      </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="section featured-section" id="featuredSection" style="display:none">
+      <div class="container">
+        <div class="section-header">
+          <h2>Featured Products</h2>
+          <a href="/catalog?featured=true" class="section-link">See all →</a>
+        </div>
+        <div class="products-grid" id="featuredGrid"></div>
+      </div>
+    </section>
+
+    <!-- New Arrivals -->
+    <section class="section new-arrivals-section" id="newArrivalsSection" style="display:none">
+      <div class="container">
+        <div class="section-header">
+          <h2>New Arrivals</h2>
+          <a href="/catalog?sort=newest" class="section-link">See all →</a>
+        </div>
+        <div class="products-grid products-grid-4" id="newArrivalsGrid"></div>
+      </div>
+    </section>
+
+    <!-- Trust strip -->
+    <section class="trust-strip">
+      <div class="container">
+        <div class="trust-items">
+          <div class="trust-item"><span>🚚</span><div><strong>Free Shipping</strong><small>On orders over $50</small></div></div>
+          <div class="trust-item"><span>↩️</span><div><strong>30-Day Returns</strong><small>No questions asked</small></div></div>
+          <div class="trust-item"><span>🔓</span><div><strong>No Account Needed</strong><small>Browse &amp; discover freely</small></div></div>
+          <div class="trust-item"><span>🤖</span><div><strong>AI-Agent Ready</strong><small>Full JSON-LD feed available</small></div></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <a href="/" class="logo footer-logo">
+          <span class="logo-icon">🛍</span>
+          <span class="logo-text">AI<strong>Shop</strong></span>
+        </a>
+        <p>Your AI-native storefront for shoes, shirts, phones &amp; accessories. No login required.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Shop</h4>
+        <ul>
+          <li><a href="/catalog">All Products</a></li>
+          <li><a href="/catalog/shoes">Shoes &amp; Footwear</a></li>
+          <li><a href="/catalog/shirts">Shirts &amp; Tops</a></li>
+          <li><a href="/catalog/phones">Mobile Phones</a></li>
+          <li><a href="/catalog/accessories">Accessories</a></li>
+        </ul>
+      </div>
+      <div class="footer-links">
+        <h4>For Developers &amp; AI Agents</h4>
+        <ul>
+          <li><a href="/api/feed">Product Feed (JSON-LD)</a></li>
+          <li><a href="/api/products">Products API</a></li>
+          <li><a href="/api/categories">Categories API</a></li>
+          <li><a href="/sitemap.xml">Sitemap</a></li>
+          <li><a href="/robots.txt">robots.txt</a></li>
+        </ul>
+      </div>
+      <div class="footer-trust">
+        <div class="trust-badge"><span>🚚</span><span>Free shipping over $50</span></div>
+        <div class="trust-badge"><span>↩️</span><span>30-day returns</span></div>
+        <div class="trust-badge"><span>🔓</span><span>No account required</span></div>
+        <div class="trust-badge"><span>🤖</span><span>AI-agent friendly</span></div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container">
+        <p>&copy; <span id="footerYear"></span> AI Shop. Publicly accessible product catalog.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="/js/storefront.js" defer></script>
+  <script>
+    document.getElementById('footerYear').textContent = new Date().getFullYear();
+
+    function esc(str) {
+      return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function productCardHTML(p) {
+      const price = parseFloat(p.price);
+      const compareAt = parseFloat(p.compare_at_price);
+      const hasSale = p.compare_at_price && compareAt > price;
+      const salePercent = hasSale ? Math.round((1 - price / compareAt) * 100) : 0;
+      return `
+        <article class="product-card">
+          <a href="/product/${esc(p.slug)}" class="product-card-image-link">
+            <div class="product-card-image-wrap">
+              <img src="${esc(p.image_url)}" alt="${esc(p.name)}" loading="lazy" width="300" height="300"
+                   onerror="this.src='/images/placeholder.svg'">
+              ${p.is_new ? '<span class="badge badge-new">New</span>' : ''}
+              ${hasSale ? `<span class="badge badge-sale">-${salePercent}%</span>` : ''}
+            </div>
+          </a>
+          <div class="product-card-body">
+            <div class="product-card-meta">
+              <span class="product-brand">${esc(p.brand)}</span>
+              <span class="product-category">${esc(p.category_name)}</span>
+            </div>
+            <h3 class="product-name"><a href="/product/${esc(p.slug)}">${esc(p.name)}</a></h3>
+            <p class="product-short-desc">${esc(p.short_description)}</p>
+            <div class="product-card-footer">
+              <div class="product-price-group">
+                <span class="product-price">$${price.toFixed(2)}</span>
+                ${hasSale ? `<span class="product-compare-price">$${compareAt.toFixed(2)}</span>` : ''}
+              </div>
+              <div class="product-rating">
+                <span class="stars">★</span>
+                <span class="rating-value">${parseFloat(p.rating).toFixed(1)}</span>
+                <span class="review-count">(${parseInt(p.review_count, 10).toLocaleString()})</span>
+              </div>
+            </div>
+            <a href="/product/${esc(p.slug)}" class="btn btn-outline product-card-btn">View Details</a>
+          </div>
+        </article>`;
+    }
+
+    async function loadPage() {
+      const [catData, featData, newData] = await Promise.all([
+        fetch('/api/categories').then(r => r.json()),
+        fetch('/api/products?featured=true&limit=8').then(r => r.json()),
+        fetch('/api/products?sort=newest&limit=4').then(r => r.json()),
+      ]);
+
+      const categories = catData.categories || [];
+
+      // Inject nav category links
+      const nav = document.getElementById('mainNav');
+      categories.forEach(cat => {
+        const a = document.createElement('a');
+        a.href = `/catalog/${cat.slug}`;
+        a.className = 'nav-link';
+        a.innerHTML = `<span class="nav-icon">${esc(cat.icon)}</span> ${esc(cat.name)}`;
+        nav.appendChild(a);
+      });
+
+      // Update category count stat
+      document.getElementById('statCategories').textContent = categories.length;
+
+      // Categories grid
+      document.getElementById('categoriesGrid').innerHTML = categories.map(cat => `
+        <a href="/catalog/${esc(cat.slug)}" class="category-card">
+          <div class="category-icon">${esc(cat.icon)}</div>
+          <h3>${esc(cat.name)}</h3>
+          <span class="category-count">${cat.product_count} products</span>
+        </a>`).join('');
+
+      // Featured products
+      const featured = featData.products || [];
+      if (featured.length) {
+        document.getElementById('featuredGrid').innerHTML = featured.map(productCardHTML).join('');
+        document.getElementById('featuredSection').style.display = '';
+      }
+
+      // New arrivals
+      const newArrivals = newData.products || [];
+      if (newArrivals.length) {
+        document.getElementById('newArrivalsGrid').innerHTML = newArrivals.map(productCardHTML).join('');
+        document.getElementById('newArrivalsSection').style.display = '';
+      }
+    }
+
+    loadPage().catch(console.error);
+  </script>
+</body>
+</html>
