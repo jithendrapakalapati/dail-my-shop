@@ -174,6 +174,403 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
+// GET /openapi.json — OpenAPI 3.1 specification
+app.get('/openapi.json', (req, res) => {
+  res.json({
+    openapi: '3.1.0',
+    info: {
+      title: 'AI Shop API',
+      description: 'Public product catalog API for AI agents, crawlers, and developers. No authentication required.',
+      version: '1.0.0',
+      contact: { url: BASE_URL },
+    },
+    servers: [{ url: BASE_URL }],
+    paths: {
+      '/api/feed': {
+        get: {
+          operationId: 'getProductFeed',
+          summary: 'Full product feed',
+          description: 'Returns the complete product catalog as a schema.org ItemList. Intended for AI agents and automated crawlers that need a snapshot of all products, categories, and merchant metadata in a single request.',
+          tags: ['Feed'],
+          responses: {
+            '200': {
+              description: 'schema.org ItemList containing all products',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      '@context': { type: 'string', example: 'https://schema.org' },
+                      '@type':    { type: 'string', example: 'ItemList' },
+                      name:       { type: 'string', example: 'AI Shop Product Catalog' },
+                      description: { type: 'string' },
+                      url:        { type: 'string', format: 'uri' },
+                      numberOfItems: { type: 'integer' },
+                      itemListElement: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            '@type':   { type: 'string', example: 'ListItem' },
+                            position:  { type: 'integer' },
+                            item: {
+                              type: 'object',
+                              properties: {
+                                '@type':      { type: 'string', example: 'Product' },
+                                '@id':        { type: 'string', format: 'uri' },
+                                name:         { type: 'string' },
+                                description:  { type: 'string' },
+                                brand:        { type: 'object', properties: { '@type': { type: 'string' }, name: { type: 'string' } } },
+                                sku:          { type: 'string' },
+                                image:        { type: 'string', format: 'uri' },
+                                url:          { type: 'string', format: 'uri' },
+                                category:     { type: 'string' },
+                                offers: {
+                                  type: 'object',
+                                  properties: {
+                                    '@type':        { type: 'string', example: 'Offer' },
+                                    price:          { type: 'number' },
+                                    priceCurrency:  { type: 'string', example: 'USD' },
+                                    availability:   { type: 'string', example: 'https://schema.org/InStock' },
+                                  },
+                                },
+                                aggregateRating: {
+                                  type: 'object',
+                                  properties: {
+                                    '@type':      { type: 'string', example: 'AggregateRating' },
+                                    ratingValue:  { type: 'number' },
+                                    reviewCount:  { type: 'integer' },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      categories: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            name:         { type: 'string' },
+                            slug:         { type: 'string' },
+                            icon:         { type: 'string' },
+                            url:          { type: 'string', format: 'uri' },
+                            productCount: { type: 'integer' },
+                          },
+                        },
+                      },
+                      merchant: {
+                        type: 'object',
+                        properties: {
+                          name:     { type: 'string' },
+                          url:      { type: 'string', format: 'uri' },
+                          currency: { type: 'string' },
+                          locale:   { type: 'string' },
+                        },
+                      },
+                      generatedAt: { type: 'string', format: 'date-time' },
+                    },
+                  },
+                },
+              },
+            },
+            '500': { description: 'Feed generation failed' },
+          },
+        },
+      },
+      '/api/products': {
+        get: {
+          operationId: 'listProducts',
+          summary: 'List products',
+          description: 'Paginated product listing with optional filtering.',
+          tags: ['Products'],
+          parameters: [
+            { name: 'category', in: 'query', schema: { type: 'string' }, description: 'Filter by category slug' },
+            { name: 'brand',    in: 'query', schema: { type: 'string' }, description: 'Filter by brand name' },
+            { name: 'min_price', in: 'query', schema: { type: 'number' } },
+            { name: 'max_price', in: 'query', schema: { type: 'number' } },
+            { name: 'in_stock', in: 'query', schema: { type: 'boolean' } },
+            { name: 'featured', in: 'query', schema: { type: 'boolean' } },
+            { name: 'sort',     in: 'query', schema: { type: 'string', enum: ['price_asc', 'price_desc', 'rating', 'newest', 'featured'] } },
+            { name: 'q',        in: 'query', schema: { type: 'string' }, description: 'Keyword search' },
+            { name: 'page',     in: 'query', schema: { type: 'integer', default: 1 } },
+            { name: 'limit',    in: 'query', schema: { type: 'integer', default: 12, maximum: 100 } },
+          ],
+          responses: {
+            '200': {
+              description: 'Paginated product list',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      products:   { type: 'array', items: { '$ref': '#/components/schemas/Product' } },
+                      total:      { type: 'integer' },
+                      page:       { type: 'integer' },
+                      limit:      { type: 'integer' },
+                      totalPages: { type: 'integer' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/products/{slug}': {
+        get: {
+          operationId: 'getProduct',
+          summary: 'Get a product by slug',
+          tags: ['Products'],
+          parameters: [{ name: 'slug', in: 'path', required: true, schema: { type: 'string' } }],
+          responses: {
+            '200': {
+              description: 'Product detail',
+              content: { 'application/json': { schema: { type: 'object', properties: { product: { '$ref': '#/components/schemas/Product' } } } } },
+            },
+            '404': { description: 'Product not found' },
+          },
+        },
+      },
+      '/api/categories': {
+        get: {
+          operationId: 'listCategories',
+          summary: 'List all categories',
+          tags: ['Categories'],
+          responses: {
+            '200': {
+              description: 'Category list',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      categories: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            id:            { type: 'integer' },
+                            name:          { type: 'string' },
+                            slug:          { type: 'string' },
+                            icon:          { type: 'string' },
+                            product_count: { type: 'integer' },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/ai-commerce/readiness': {
+        get: {
+          operationId: 'checkReadiness',
+          summary: 'AI-agent readiness check',
+          description: 'Reports catalog completeness score and available endpoint URLs for AI agent discovery.',
+          tags: ['AI Commerce'],
+          responses: {
+            '200': {
+              description: 'Readiness report',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      ready:    { type: 'boolean' },
+                      score:    { type: 'integer', description: 'Completeness score 0–100' },
+                      summary:  { type: 'object' },
+                      checks:   { type: 'object' },
+                      endpoints: { type: 'object' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/ai-commerce/search': {
+        get: {
+          operationId: 'aiSearch',
+          summary: 'Structured product search for AI agents',
+          tags: ['AI Commerce'],
+          parameters: [
+            { name: 'q',         in: 'query', required: true, schema: { type: 'string', minLength: 2 } },
+            { name: 'category',  in: 'query', schema: { type: 'string' } },
+            { name: 'brand',     in: 'query', schema: { type: 'string' } },
+            { name: 'min_price', in: 'query', schema: { type: 'number' } },
+            { name: 'max_price', in: 'query', schema: { type: 'number' } },
+            { name: 'limit',     in: 'query', schema: { type: 'integer', default: 12, maximum: 50 } },
+            { name: 'sort',      in: 'query', schema: { type: 'string', enum: ['price_asc', 'price_desc', 'rating', 'newest'] } },
+          ],
+          responses: {
+            '200': {
+              description: 'Search results',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      query:    { type: 'string' },
+                      total:    { type: 'integer' },
+                      products: { type: 'array', items: { '$ref': '#/components/schemas/Product' } },
+                    },
+                  },
+                },
+              },
+            },
+            '400': { description: 'Query too short' },
+          },
+        },
+      },
+      '/api/ai-commerce/products/{id}': {
+        get: {
+          operationId: 'aiGetProduct',
+          summary: 'Full product record (slug or numeric id)',
+          tags: ['AI Commerce'],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' }, description: 'Product slug or numeric id' }],
+          responses: {
+            '200': { description: 'Product record', content: { 'application/json': { schema: { '$ref': '#/components/schemas/Product' } } } },
+            '404': { description: 'Product not found' },
+          },
+        },
+      },
+      '/api/ai-commerce/products/{id}/inventory': {
+        get: {
+          operationId: 'getInventory',
+          summary: 'Real-time inventory status',
+          tags: ['AI Commerce'],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+          responses: {
+            '200': {
+              description: 'Inventory status',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      productId:         { type: 'integer' },
+                      sku:               { type: 'string' },
+                      inStock:           { type: 'boolean' },
+                      stockQuantity:     { type: 'integer' },
+                      availability:      { type: 'string' },
+                      availabilityLabel: { type: 'string' },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/ai-commerce/products/{id}/variants': {
+        get: {
+          operationId: 'getVariants',
+          summary: 'Product variant combinations (sizes, colors, etc.)',
+          tags: ['AI Commerce'],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'string' } }],
+          responses: {
+            '200': {
+              description: 'Variant data',
+              content: {
+                'application/json': {
+                  schema: {
+                    type: 'object',
+                    properties: {
+                      productId:         { type: 'integer' },
+                      hasVariants:       { type: 'boolean' },
+                      variantDimensions: { type: 'object' },
+                      basePrice:         { type: 'number' },
+                      currency:          { type: 'string' },
+                      variants:          { type: 'array', items: { type: 'object' } },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      '/api/ai-commerce/carts': {
+        post: {
+          operationId: 'createCart',
+          summary: 'Create a cart from a list of products',
+          tags: ['AI Commerce'],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  required: ['items'],
+                  properties: {
+                    items: {
+                      type: 'array',
+                      items: {
+                        type: 'object',
+                        required: ['productId', 'quantity'],
+                        properties: {
+                          productId: { type: 'string', description: 'Product slug or numeric id' },
+                          quantity:  { type: 'integer', minimum: 1 },
+                          variant:   { type: 'object', description: 'Optional variant attributes, e.g. {"size":"M"}' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          responses: {
+            '200': { description: 'Cart created with checkout URL' },
+            '400': { description: 'Missing or invalid items' },
+            '422': { description: 'No valid items (all out of stock or not found)' },
+          },
+        },
+      },
+    },
+    components: {
+      schemas: {
+        Product: {
+          type: 'object',
+          properties: {
+            id:                { type: 'integer' },
+            name:              { type: 'string' },
+            slug:              { type: 'string' },
+            sku:               { type: 'string' },
+            brand:             { type: 'string' },
+            short_description: { type: 'string' },
+            description:       { type: 'string' },
+            price:             { type: 'string', description: 'Decimal string, e.g. "49.99"' },
+            compare_at_price:  { type: 'string', nullable: true },
+            image_url:         { type: 'string', format: 'uri' },
+            category_name:     { type: 'string' },
+            in_stock:          { type: 'boolean' },
+            stock_quantity:    { type: 'integer' },
+            rating:            { type: 'number' },
+            review_count:      { type: 'integer' },
+            is_featured:       { type: 'boolean' },
+            is_new:            { type: 'boolean' },
+            tags:              { type: 'array', items: { type: 'string' } },
+            attributes:        { type: 'object', description: 'Variant attributes, e.g. {"sizes":["S","M","L"]}' },
+          },
+        },
+      },
+    },
+    tags: [
+      { name: 'Feed',        description: 'Full catalog snapshot — ideal for AI agents needing all products at once' },
+      { name: 'Products',    description: 'Standard paginated product API' },
+      { name: 'Categories',  description: 'Category listing' },
+      { name: 'AI Commerce', description: 'AI-agent optimised endpoints: search, inventory, variants, cart' },
+    ],
+  });
+});
+
 // GET /api/feed — structured product feed for AI agents and crawlers
 app.get('/api/feed', async (req, res) => {
   try {
