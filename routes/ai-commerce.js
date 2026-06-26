@@ -9,60 +9,6 @@ const router = express.Router();
 // In-memory cart store (survives the process lifetime; resets on restart)
 const carts = new Map();
 
-// ── Canonical product schema builder ─────────────────────────────────────────
-// Converts a DB row into a schema.org Product object enriched with all known
-// attributes, tags, and AI-commerce metadata.
-
-function toCanonicalProduct(p, baseUrl) {
-  const attrs = (p.attributes && typeof p.attributes === 'object') ? p.attributes : {};
-  const additionalProperty = [];
-  Object.entries(attrs).forEach(([k, v]) => {
-    (Array.isArray(v) ? v : [v]).forEach(val =>
-      additionalProperty.push({ '@type': 'PropertyValue', name: k, value: String(val) })
-    );
-  });
-
-  const product = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    '@id': `${baseUrl}/product/${p.slug}`,
-    name: p.name,
-    description: p.description || p.short_description || '',
-    shortDescription: p.short_description || '',
-    sku: p.sku || '',
-    brand: { '@type': 'Brand', name: p.brand || '' },
-    image: [p.image_url].filter(Boolean),
-    url: `${baseUrl}/product/${p.slug}`,
-    category: p.category_name || '',
-    offers: {
-      '@type': 'Offer',
-      price: parseFloat(p.price),
-      priceCurrency: 'USD',
-      availability: p.in_stock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      itemCondition: 'https://schema.org/NewCondition',
-      url: `${baseUrl}/product/${p.slug}`,
-      ...(p.compare_at_price && parseFloat(p.compare_at_price) > parseFloat(p.price)
-        ? { highPrice: parseFloat(p.compare_at_price) } : {}),
-    },
-    isNew: !!p.is_new,
-    isFeatured: !!p.is_featured,
-  };
-
-  if (p.review_count > 0) {
-    product.aggregateRating = {
-      '@type': 'AggregateRating',
-      ratingValue: parseFloat(p.rating),
-      reviewCount: parseInt(p.review_count, 10),
-      bestRating: 5,
-      worstRating: 1,
-    };
-  }
-  if (additionalProperty.length) product.additionalProperty = additionalProperty;
-  if (p.tags && p.tags.length) product.keywords = p.tags.join(', ');
-
-  return product;
-}
-
 // ── GET /api/ai-commerce/readiness ────────────────────────────────────────────
 // Tells AI agents whether this store is fully instrumented for discovery.
 router.get('/readiness', async (req, res) => {
@@ -106,8 +52,6 @@ router.get('/readiness', async (req, res) => {
         allHaveDescriptions: d === t,
         allHaveSkus: s === t,
         hasFeaturedProducts: f > 0,
-        schemaOrgEnabled: true,
-        jsonLdEnabled: true,
       },
       endpoints: {
         search: '/api/ai-commerce/search?q=',
@@ -125,7 +69,6 @@ router.get('/readiness', async (req, res) => {
 // ── GET /api/ai-commerce/search?q=... ────────────────────────────────────────
 // Structured product search for AI agents. Supports filters and returns canonical schema.
 router.get('/search', async (req, res) => {
-  const baseUrl = req.app.get('baseUrl') || '';
   const { q, category, min_price, max_price, brand, limit = '12', sort = '' } = req.query;
 
   if (!q || q.trim().length < 2) {
@@ -166,7 +109,7 @@ router.get('/search', async (req, res) => {
     res.json({
       query: q,
       total: result.rows.length,
-      products: result.rows.map(row => toCanonicalProduct(row, baseUrl)),
+      products: result.rows,
     });
   } catch (err) {
     res.status(500).json({ error: 'Search failed', message: err.message });
@@ -176,7 +119,6 @@ router.get('/search', async (req, res) => {
 // ── GET /api/ai-commerce/products/:id ────────────────────────────────────────
 // Full canonical product record. Accepts slug or numeric id.
 router.get('/products/:id', async (req, res) => {
-  const baseUrl = req.app.get('baseUrl') || '';
   try {
     const result = await pool.query(
       `SELECT p.*, c.name AS category_name, c.slug AS category_slug, c.icon AS category_icon
@@ -193,12 +135,7 @@ router.get('/products/:id', async (req, res) => {
       [product.id]
     );
 
-    const canonical = toCanonicalProduct(product, baseUrl);
-    if (imagesRes.rows.length) {
-      canonical.image = [product.image_url, ...imagesRes.rows.map(r => r.url)].filter(Boolean);
-    }
-
-    res.json(canonical);
+    res.json(product);
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch product', message: err.message });
   }
