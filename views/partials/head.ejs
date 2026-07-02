@@ -1,21 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<%
+  const hasProduct = typeof product !== 'undefined' && product;
+  const hasCategory = typeof currentCategory !== 'undefined' && currentCategory;
+  const isNoindex = typeof noindex !== 'undefined' && noindex;
+
+  let pageUrl = baseUrl;
+  if (hasProduct) pageUrl = `${baseUrl}/product/${product.slug}`;
+  else if (hasCategory) pageUrl = `${baseUrl}/catalog/${currentCategory.slug}`;
+  if (typeof canonicalUrl !== 'undefined' && canonicalUrl) pageUrl = canonicalUrl;
+
+  const ogImage = hasProduct && product.image_url ? product.image_url : `${baseUrl}/images/placeholder.svg`;
+  const ogImageSize = hasProduct && product.image_url ? 600 : 400;
+%>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <meta name="description" content="<%= description %>">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="<%= isNoindex ? 'noindex, follow' : 'index, follow' %>">
 
   <!-- Canonical -->
-  <% if (typeof product !== 'undefined' && product) { %>
-  <link rel="canonical" href="<%= baseUrl %>/product/<%= product.slug %>">
-  <% } else if (typeof currentCategory !== 'undefined' && currentCategory) { %>
-  <link rel="canonical" href="<%= baseUrl %>/catalog/<%= currentCategory.slug %>">
-  <% } else { %>
-  <link rel="canonical" href="<%= baseUrl %>">
+  <link rel="canonical" href="<%= pageUrl %>">
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="Shop">
+  <meta property="og:type" content="<%= hasProduct ? 'product' : 'website' %>">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="<%= title %>">
+  <meta property="og:description" content="<%= description %>">
+  <meta property="og:url" content="<%= pageUrl %>">
+  <meta property="og:image" content="<%= ogImage %>">
+  <meta property="og:image:width" content="<%= ogImageSize %>">
+  <meta property="og:image:height" content="<%= ogImageSize %>">
+  <% if (hasProduct) { %>
+  <meta property="og:image:alt" content="<%= product.name %>">
+  <meta property="product:price:amount" content="<%= product.price %>">
+  <meta property="product:price:currency" content="USD">
+  <meta property="product:availability" content="<%= product.in_stock ? 'in stock' : 'out of stock' %>">
+  <% if (product.brand) { %>
+  <meta property="product:brand" content="<%= product.brand %>">
+  <% } %>
   <% } %>
 
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="preconnect" href="https://images.unsplash.com">
+
+  <% if (hasProduct) {
+    const productLd = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.name,
+      image: [ogImage],
+      description,
+      sku: product.sku || undefined,
+      brand: product.brand ? { '@type': 'Brand', name: product.brand } : undefined,
+      offers: {
+        '@type': 'Offer',
+        url: pageUrl,
+        priceCurrency: 'USD',
+        price: product.price,
+        availability: product.in_stock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        itemCondition: 'https://schema.org/NewCondition',
+      },
+      aggregateRating: product.review_count > 0 ? {
+        '@type': 'AggregateRating',
+        ratingValue: product.rating,
+        reviewCount: product.review_count,
+      } : undefined,
+    };
+
+    const breadcrumbLd = {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+        { '@type': 'ListItem', position: 2, name: 'All Products', item: `${baseUrl}/catalog` },
+        ...(product.cat_slug ? [{ '@type': 'ListItem', position: 3, name: product.category_name, item: `${baseUrl}/catalog/${product.cat_slug}` }] : []),
+        { '@type': 'ListItem', position: product.cat_slug ? 4 : 3, name: product.name, item: pageUrl },
+      ],
+    };
+
+    const toSafeJson = (obj) => JSON.stringify(obj).replace(/</g, '\\u003c');
+  %>
+  <script type="application/ld+json"><%- toSafeJson(productLd) %></script>
+  <script type="application/ld+json"><%- toSafeJson(breadcrumbLd) %></script>
+  <% } %>
 </head>
