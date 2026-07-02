@@ -45,45 +45,6 @@
 
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="preconnect" href="https://images.unsplash.com">
-
-  <% if (hasProduct) {
-    const productLd = {
-      '@context': 'https://schema.org',
-      '@type': 'Product',
-      name: product.name,
-      image: [ogImage],
-      description,
-      sku: product.sku || undefined,
-      brand: product.brand ? { '@type': 'Brand', name: product.brand } : undefined,
-      offers: {
-        '@type': 'Offer',
-        url: pageUrl,
-        priceCurrency: 'USD',
-        price: product.price,
-        availability: product.in_stock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-        itemCondition: 'https://schema.org/NewCondition',
-      },
-      aggregateRating: product.review_count > 0 ? {
-        '@type': 'AggregateRating',
-        ratingValue: product.rating,
-        reviewCount: product.review_count,
-      } : undefined,
-    };
-
-    const breadcrumbLd = {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
-        { '@type': 'ListItem', position: 2, name: 'All Products', item: `${baseUrl}/catalog` },
-        ...(product.cat_slug ? [{ '@type': 'ListItem', position: 3, name: product.category_name, item: `${baseUrl}/catalog/${product.cat_slug}` }] : []),
-        { '@type': 'ListItem', position: product.cat_slug ? 4 : 3, name: product.name, item: pageUrl },
-      ],
-    };
-
-    const toSafeJson = (obj) => JSON.stringify(obj).replace(/</g, '\\u003c');
-  %>
-  <script type="application/ld+json"><%- toSafeJson(productLd) %></script>
-  <script type="application/ld+json"><%- toSafeJson(breadcrumbLd) %></script>
+  <meta name="google-site-verification" content="C4sgDIj2KneLidomhjFXbUJGE04KjPM2wSv_2JqCHBk">
   <% } %>
 </head>
