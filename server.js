@@ -90,6 +90,10 @@ function resolveSort(sort) {
   }[sort] || 'p.is_featured DESC, p.created_at DESC';
 }
 
+
+// ── Agentic Commerce Protocol (ACP) v2026-04-17 ───────────────────────────────
+app.use('/acp', require('./routes/acp'));
+
 // ── API ───────────────────────────────────────────────────────────────────────
 
 // GET /api/categories
@@ -382,6 +386,61 @@ app.get('/order/:id', async (req, res) => {
     console.error('GET /order/:id error:', err.message);
     res.status(500).render('error', { title: 'Error', description: '', status: 500, message: 'Could not load order', baseUrl: BASE_URL });
   }
+});
+
+
+// ── ACP Discovery — /.well-known/acp ─────────────────────────────────────────
+// Tells AI agents and crawler tools how to discover this merchant's ACP endpoints.
+app.get('/.well-known/acp', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.json({
+    protocol:        'acp',
+    version:         '2026-04-17',
+    merchant: {
+      name:          'AI Shop',
+      url:           BASE_URL,
+      currency:      'usd',
+      locale:        'en-US',
+    },
+    endpoints: {
+      // ACP Checkout Sessions (core ACP spec)
+      checkout_sessions:        `${BASE_URL}/acp/checkout_sessions`,
+      // ACP product catalog (for agent ingestion)
+      feed:                     `${BASE_URL}/acp/feed`,
+      products:                 `${BASE_URL}/acp/products`,
+      // Mock PSP — Shared Payment Token issuance
+      psp_tokens:               `${BASE_URL}/acp/psp/tokens`,
+      // Discovery
+      well_known:               `${BASE_URL}/.well-known/acp`,
+    },
+    capabilities: {
+      checkout:             true,
+      product_feed:         true,
+      product_search:       true,
+      shared_payment_token: true,
+      order_persistence:    true,
+      fulfillment_options:  true,
+      idempotency:          true,
+    },
+    payment_handlers: [
+      {
+        id:      'card_tokenized',
+        name:    'dev.acp.tokenized.card',
+        version: '2026-01-22',
+        psp:     'ai-shop-mock-psp',
+        config: {
+          token_endpoint: `${BASE_URL}/acp/psp/tokens`,
+        },
+      },
+    ],
+    policies: {
+      shipping: 'Free shipping on orders $50 or more. $9.99 flat otherwise.',
+      returns:  '30-day no-questions-asked returns.',
+      currency: 'usd',
+      login_required: false,
+    },
+    spec_url: 'https://github.com/agentic-commerce-protocol/agentic-commerce-protocol',
+  });
 });
 
 // ── SEO ───────────────────────────────────────────────────────────────────────
