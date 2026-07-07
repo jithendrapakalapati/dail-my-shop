@@ -1,0 +1,201 @@
+# AI Shop Storefront
+
+> AI-powered e-commerce storefront selling shoes, shirts, mobile phones, and accessories. No account or login required to browse, search, or purchase. Built for human shoppers and AI agents alike, with dedicated structured-data feeds and a fully documented AI Commerce API.
+
+AI Shop is a publicly accessible online store with 28 products across 4 categories, priced from $19.90 to $1,299.99 USD. Every product ships with schema.org JSON-LD structured data. Free shipping on orders over $50. 30-day no-questions-asked returns. All stock is in-stock and available for immediate purchase.
+
+## Store Pages
+
+- [Homepage](/): Hero banner, featured products grid, category showcase, and new arrivals. Loads category and featured product data via AJAX.
+- [Full Catalog](/catalog): Browse all 28 products. Supports sidebar filtering by category, brand, price range, and availability. Sortable by price (asc/desc), name, rating, or newest.
+- [Shoes & Footwear](/catalog/shoes): 8 products — Nike, Adidas, Converse, New Balance, Timberland, Vans, Puma, ASICS. Prices $64.99–$199.95.
+- [Shirts & Tops](/catalog/shirts): 7 products — UrbanThread, Ralph Lauren, Levi's, Tommy Hilfiger, H&M, Under Armour, Uniqlo. Prices $19.90–$98.50.
+- [Mobile Phones](/catalog/phones): 5 products — Apple, Samsung, Google, OnePlus, Nothing. Prices $349–$1,299.99.
+- [Accessories](/catalog/accessories): 8 products — Apple, Samsung, Anker, Ray-Ban, Sony, JBL, Logitech. Prices $59–$349.99.
+- [Product Detail](/product/:slug): Individual product with full description, images, ratings, size/variant picker, add-to-cart, and related products.
+- [Search](/search): Redirects to /catalog?q= for full-text search across product name, brand, and description.
+- [Checkout](/checkout): Order form collecting customer name, email, and shipping address. No account required. Supports any quantity of items.
+- [Order Confirmation](/order/:id): Post-purchase confirmation showing order number, items, and totals.
+
+## Product Catalog — Shoes & Footwear
+
+- [Nike Air Max 270](/product/nike-air-max-270): SKU NK-AM270-BLK · $149.99 (was $189.99) · Lifestyle sneaker with the largest Air heel unit yet. Engineered mesh upper. Sizes 7–12. Rating 4.8/5 (2,341 reviews).
+- [Adidas Ultraboost 22](/product/adidas-ultraboost-22): SKU AD-UB22-WHT · $189.95 (was $219.95) · Performance running shoe. Primeknit+ upper, BOOST midsole, Continental Rubber outsole. Sizes 6–13. Rating 4.7/5 (1,876 reviews).
+- [Converse Chuck Taylor All Star](/product/converse-chuck-taylor-all-star): SKU CV-CT70-BLK · $64.99 (was $80.00) · Classic canvas high-top since 1917. Vulcanized rubber sole. Sizes 5–12. Rating 4.6/5 (5,412 reviews).
+- [New Balance 574](/product/new-balance-574): SKU NB-574-GRY · $84.99 (was $99.99) · Heritage lifestyle sneaker. Suede/mesh upper, ENCAP midsole. Sizes 7–12. Rating 4.5/5 (3,210 reviews).
+- [Timberland Premium 6-Inch Boot](/product/timberland-premium-6-inch-boot): SKU TB-6IN-WHT · $199.95 (was $229.95) · 100% waterproof full-grain leather boot since 1973. Anti-fatigue technology, lug rubber outsole. Sizes 7–13. Rating 4.7/5 (1,543 reviews).
+- [Vans Old Skool](/product/vans-old-skool): SKU VN-OS-BKWH · $69.99 (was $84.99) · Original skate shoe with iconic side stripe. Canvas/suede upper, waffle rubber outsole. Sizes 5–12. Rating 4.6/5 (4,321 reviews).
+- [Puma RS-X Reinvention](/product/puma-rsx-reinvention): SKU PM-RSX-BLU · $109.99 (was $129.99) · NEW ARRIVAL — bold chunky lifestyle sneaker inspired by late-80s Running System tech. Mesh/leather upper, EVA sole. Sizes 7–12. Rating 4.3/5 (876 reviews).
+- [ASICS Gel-Kayano 29](/product/asics-gel-kayano-29): SKU AS-GK29-BLK · $159.95 (was $179.95) · NEW ARRIVAL — elite stability running shoe. FF BLAST+ ECO cushioning, LITETRUSS technology, AHAR+ rubber outsole. Sizes 7–12. Rating 4.8/5 (1,234 reviews).
+
+## Product Catalog — Shirts & Tops
+
+- [Classic White Oxford Shirt](/product/classic-white-oxford-shirt): SKU UT-OXF-WHT-M · $44.99 (was $59.99) · Brand: UrbanThread · 100% premium combed cotton, tailored fit, spread collar, mother-of-pearl buttons, wrinkle-resistant. Sizes XS–XXL. Rating 4.4/5 (987 reviews).
+- [Polo Ralph Lauren Classic Fit Polo](/product/polo-ralph-lauren-classic-fit): SKU RL-POLO-NVY-L · $98.50 (was $125.00) · Brand: Ralph Lauren · Mesh cotton polo with 2-button placket and embroidered pony since 1972. Sizes S–XXL. Rating 4.7/5 (2,103 reviews).
+- [Levi's Relaxed Fit Graphic Tee](/product/levis-relaxed-fit-graphic-tee): SKU LV-GTEE-WH-M · $29.99 (was $39.99) · Brand: Levi's · 100% organic cotton, relaxed crewneck, dropped shoulders, vintage Levi's graphic. Sizes XS–XXL. Rating 4.3/5 (1,456 reviews).
+- [Tommy Hilfiger Slim Stripe Shirt](/product/tommy-hilfiger-slim-stripe-shirt): SKU TH-SLIM-STR-M · $79.00 (was $99.00) · NEW ARRIVAL · Brand: Tommy Hilfiger · 100% poplin cotton, slim fit, button-down collar, classic horizontal stripe. Sizes S–XXL. Rating 4.4/5 (743 reviews).
+- [H&M Oversized Linen Shirt](/product/hm-oversized-linen-shirt): SKU HM-LIN-BEI-L · $34.99 (was $49.99) · NEW ARRIVAL · Brand: H&M · Linen blend, oversized boxy fit, camp collar, dropped shoulders. Sizes XS–XL. Rating 4.2/5 (567 reviews).
+- [Under Armour Tech 2.0 T-Shirt](/product/under-armour-tech-20-tshirt): SKU UA-TECH2-BLK-M · $25.00 (was $35.00) · Brand: Under Armour · UA Tech fabric, anti-odor technology, 4-way stretch, crewneck. Sizes XS–XXXL. Rating 4.5/5 (3,241 reviews).
+- [Uniqlo AIRism Cotton Crew T-Shirt](/product/uniqlo-airism-cotton-crew-tshirt): SKU UQ-AIRISM-WHT-M · $19.90 (was $29.90) · Brand: Uniqlo · AIRism cotton with moisture-wicking and quick-dry technology, silicone print neck label. Sizes XS–XXXL. Rating 4.6/5 (8,932 reviews).
+
+## Product Catalog — Mobile Phones
+
+- [Apple iPhone 15 Pro Max](/product/apple-iphone-15-pro-max): SKU APL-IP15PM-256 · $1,199.00 · Titanium design, A17 Pro chip (6-core GPU), 6.7-inch Super Retina XDR, 48MP main + 12MP ultra wide + 12MP 5× telephoto cameras, USB-C (USB 3), 5G / Wi-Fi 6E / Bluetooth 5.3, 4422 mAh, iOS 17. Storage: 256 GB / 512 GB / 1 TB. Rating 4.9/5 (4,521 reviews).
+- [Samsung Galaxy S24 Ultra](/product/samsung-galaxy-s24-ultra): SKU SAM-GS24U-256 · $1,299.99 · Built-in S Pen, Snapdragon 8 Gen 3, 6.8-inch Dynamic AMOLED 2X, 200MP + 12MP + 50MP 5× + 10MP 3× cameras, 5000 mAh, Galaxy AI (Circle to Search, Live Translate), Android 14 / One UI 6.1. Storage: 256 GB / 512 GB / 1 TB. Rating 4.8/5 (3,201 reviews).
+- [Google Pixel 8 Pro](/product/google-pixel-8-pro): SKU GOG-PX8P-128 · $999.00 (was $1,099.00) · Google Tensor G3 chip, 6.7-inch LTPO OLED, 50MP + 48MP ultra wide + 48MP 5× telephoto, 5050 mAh, Best Take / Magic Eraser / Photo Unblur, 7-year OS guarantee, Android 14. Storage: 128 GB / 256 GB / 1 TB. Rating 4.7/5 (2,134 reviews).
+- [OnePlus 12 5G](/product/oneplus-12-5g): SKU OP-OP12-256 · $799.00 (was $899.00) · NEW ARRIVAL · Snapdragon 8 Gen 3, Hasselblad-tuned 50MP Sony LYT-808 + 48MP ultra wide + 64MP 3× periscope, 5400 mAh, 100W SUPERVOOC (0–100% in 26 min) + 50W wireless, 6.82-inch LTPO3 AMOLED, OxygenOS 14. Storage: 256 GB / 512 GB. Rating 4.6/5 (1,876 reviews).
+- [Nothing Phone (2a)](/product/nothing-phone-2a): SKU NTH-PH2A-128 · $349.00 (was $399.00) · NEW ARRIVAL · Iconic Glyph Interface, MediaTek Dimensity 7200 Pro, 6.7-inch AMOLED, 50MP Sony IMX882 OIS + 50MP ultra wide, 5000 mAh, transparent design, Nothing OS 2.5 (Android 14). Storage: 128 GB / 256 GB. Rating 4.5/5 (987 reviews).
+
+## Product Catalog — Accessories
+
+- [Apple AirPods Pro (2nd Gen)](/product/apple-airpods-pro-2nd-gen): SKU APL-APP2-WHT · $249.00 (was $279.00) · Apple H2 chip, 2× better ANC, Adaptive Audio, Personalised Spatial Audio with head tracking, 6h buds / 30h total with MagSafe case, IPX4, Bluetooth 5.3. Rating 4.8/5 (6,721 reviews).
+- [Samsung Galaxy Watch 6 Classic](/product/samsung-galaxy-watch-6-classic): SKU SAM-GW6C-47 · $329.99 (was $399.99) · Iconic rotating bezel, 1.5-inch Super AMOLED, ECG + blood oxygen + sleep coaching + body composition sensors, 5ATM + IP68, Wear OS 4 / One UI Watch 5, 425 mAh (47mm). Rating 4.6/5 (2,134 reviews).
+- [Anker 737 PowerBank 24000mAh](/product/anker-737-powerbank-24000mah): SKU ANK-737-BLK · $79.99 (was $99.99) · 140W total output across 3 ports (USB-C 140W + USB-C 18W + USB-A 18W), smart display showing wattage and charge %, charges MacBook Pro 0–50% in 49 min, recharges in ~2 h via 65W+. Rating 4.7/5 (3,412 reviews).
+- [Apple MagSafe Wallet](/product/apple-magsafe-wallet): SKU APL-MSWL-TAN · $59.00 · European leather, snaps magnetically to iPhone 12 and later, holds up to 3 cards, Find My integration. Rating 4.2/5 (876 reviews).
+- [Ray-Ban Aviator Classic](/product/ray-ban-aviator-classic): SKU RB-AVI-GLD-G15 · $154.00 (was $195.00) · Original 1937 design, gold metal double-bridge frame, G-15 green lenses (UV400), spring hinges, 58mm lens / 14mm bridge / 135mm temple. Rating 4.7/5 (4,231 reviews).
+- [Sony WH-1000XM5 Headphones](/product/sony-wh-1000xm5-headphones): SKU SNY-XM5-BLK · $349.99 (was $399.99) · Industry-leading ANC (8 mics + 2 processors), 30mm driver (4Hz–40kHz), 30h battery (ANC on), USB-C quick charge (3 min = 3h), Speak-to-Chat auto-pause, 250g, Bluetooth 5.2 multipoint. Rating 4.8/5 (5,123 reviews).
+- [JBL Charge 5 Portable Speaker](/product/jbl-charge-5-portable-speaker): SKU JBL-CH5-BLK · $179.95 (was $199.95) · IP67 waterproof + dustproof, 20h battery, USB-C, PartyBoost multi-speaker linking, built-in powerbank output, Bluetooth 5.1, separate tweeter for high-frequency clarity. Rating 4.7/5 (3,241 reviews).
+- [Logitech MX Master 3S Mouse](/product/logitech-mx-master-3s-mouse): SKU LOG-MXM3S-GRA · $99.99 (was $119.99) · 8000 DPI optical sensor (works on glass), MagSpeed electromagnetic scroll (auto ratchet ↔ free-spin), near-silent clicks (90% quieter), 70-day battery, USB-C, 3-device multipoint Bluetooth + Logi Bolt USB, Windows/Mac/Linux/ChromeOS. Rating 4.9/5 (4,521 reviews).
+
+## Public REST API
+
+All endpoints return JSON. No authentication required. CORS enabled for all origins.
+
+- [GET /api/categories](/api/categories): Returns all 4 categories with name, slug, icon, description, image URL, and product count.
+
+- [GET /api/products](/api/products): Paginated product list. Query parameters: `category` (slug), `brand` (partial match), `min_price`, `max_price`, `in_stock` (true/false), `featured` (true/false), `q` (full-text search on name/brand/description), `sort` (price_asc | price_desc | name_asc | rating | newest), `page` (default 1), `limit` (default 12, max 100). Response: `{ products, total, page, limit, totalPages }`.
+
+- [GET /api/products/:slug](/api/products/:slug): Single product by URL slug. Response: `{ product }` with all fields including attributes JSONB (sizes, colors, specs), rating, review_count, tags, meta_title, meta_description.
+
+- [GET /api/search](/api/search): Full-text search. Parameters: `q` (required, min 2 chars), `limit` (default 12, max 50). Response: `{ products, total, query }`. Matches on name, brand, short_description, and full description. Results ranked: name matches first, then featured, then by rating.
+
+- [GET /api/feed](/api/feed): Complete catalog as a schema.org `ItemList` of `Product` objects in JSON-LD format. Includes offer pricing, availability (`InStock`/`OutOfStock`), aggregate ratings, brand, SKU, and image URL. Also returns a `categories` array and a `merchant` block. Designed for AI indexing and automated catalog ingestion.
+
+- [POST /api/orders](/api/orders): Place an order. Request body: `{ customer: { name, email, address: { street, city, state, zip, country } }, items: [{ productId, name, slug, price, qty, size }] }`. Response: `{ orderId, orderNumber, grandTotal }`. Free shipping on orders ≥ $50; otherwise $9.99 flat shipping is added automatically.
+
+## AI Commerce API
+
+Dedicated endpoints under `/api/ai-commerce/` built specifically for AI agent workflows. All return schema.org-compatible canonical Product objects.
+
+- [GET /api/ai-commerce/readiness](/api/ai-commerce/readiness): Scores the catalog on AI-agent compatibility (images present, descriptions complete, SKUs set, featured products available, categories defined). Returns a numeric readiness score and per-dimension breakdown.
+
+- [GET /api/ai-commerce/search](/api/ai-commerce/search): Parameters: `q` (search query). Returns structured `schema.org/Product` objects (canonical form) with all attributes, pricing, and availability — no HTML parsing needed.
+
+- [GET /api/ai-commerce/products/:id](/api/ai-commerce/products/:id): Full canonical Product schema for one product, enriched with all metadata fields. Suitable for shopping agents that need a complete machine-readable product description.
+
+- [GET /api/ai-commerce/products/:id/inventory](/api/ai-commerce/products/:id/inventory): Real-time stock status and SKU data for a specific product ID.
+
+- [GET /api/ai-commerce/products/:id/variants](/api/ai-commerce/products/:id/variants): Available variant dimensions for a product — sizes, colors, materials, styles — parsed from the product's JSONB attributes column.
+
+- [POST /api/ai-commerce/carts](/api/ai-commerce/carts): Create an in-memory shopping cart. Request body: `{ items: [{ productId, slug, quantity, size }] }`. Returns a `cart_id` and cart summary. Carts are ephemeral (in-memory only, not persisted to the database).
+
+- [GET /api/ai-commerce/carts/:cart_id/checkout-initiation](/api/ai-commerce/carts/:cart_id/checkout-initiation): Returns a cart summary (line items, subtotal, estimated shipping, grand total) plus a `next_steps` action descriptor telling the agent how to complete the order (endpoint, method, required fields).
+
+## How an AI Agent Should Purchase a Product (Legacy API)
+
+1. Discover the catalog: `GET /api/feed` or `GET /api/ai-commerce/search?q=<query>`
+2. Inspect a product: `GET /api/ai-commerce/products/:id` — verify price, availability, and variants
+3. Check inventory: `GET /api/ai-commerce/products/:id/inventory`
+4. Build a cart: `POST /api/ai-commerce/carts` with item list
+5. Confirm totals: `GET /api/ai-commerce/carts/:cart_id/checkout-initiation`
+6. Place the order: `POST /api/orders` with customer details and items array
+7. Store the returned `orderNumber` for confirmation
+
+## Agentic Commerce Protocol (ACP) — v2026-04-17
+
+AI Shop implements the full Agentic Commerce Protocol (ACP), the open standard by OpenAI and Stripe for AI agent-driven purchasing. ACP endpoints live under `/acp/` and follow the spec exactly: date-versioned headers, idempotency enforcement, money in minor units (cents), and a session-based checkout lifecycle.
+
+- [ACP Discovery](/.well-known/acp): Machine-readable JSON manifest at `/.well-known/acp`. Lists all ACP endpoints, capabilities, payment handlers, and policies. AI agents and crawlers should read this first.
+
+### ACP Product Catalog (for agent ingestion)
+
+- [GET /acp/feed](/acp/feed): Full ACP-native product catalog. Returns all 28 products with `checkout_item_id`, prices in cents and display format, attributes, availability, and links to checkout. Agents should call this once to build a local product index. Required header: `API-Version: 2026-04-17`.
+
+- [GET /acp/products](/acp/products): Paginated, filterable product list. Query params: `q` (search), `category`, `brand`, `min_price`, `max_price`, `in_stock`, `featured`, `page`, `limit` (max 100). Response includes `pagination` metadata and `checkout_item_id` on each product. Required header: `API-Version: 2026-04-17`.
+
+- [GET /acp/products/:id](/acp/products/:id): Single ACP product by numeric ID or slug. Returns full detail including `description`, `attributes`, `stock_quantity`, `meta_title`, and `meta_description`. Required header: `API-Version: 2026-04-17`.
+
+### ACP Payment — Shared Payment Token (SPT)
+
+- [POST /acp/psp/tokens](/acp/psp/tokens): Issues a single-use Shared Payment Token from card data. Body: `{ card: { number, exp_month, exp_year, cvc } }`. Response: `{ token, type: "spt", instrument: { type, last_four, expiry }, expires_at }`. Tokens expire after 15 minutes and are single-use. Pass the returned `token` as `payment_data.instrument.credential.token` when completing a checkout session.
+
+### ACP Checkout Sessions
+
+All checkout session POST endpoints require two headers:
+- `API-Version: 2026-04-17`
+- `Idempotency-Key: <uuid-v4>` — missing key returns 400 `idempotency_key_required`; same key + different body returns 422 `idempotency_conflict`; replayed requests return the original response with `Idempotent-Replayed: true`.
+
+Session statuses: `not_ready_for_payment` → `ready_for_payment` → `in_progress` → `completed` (or `canceled`).
+
+All monetary amounts are integers in minor units (cents). USD only.
+
+- [POST /acp/checkout_sessions](/acp/checkout_sessions): **Create** a checkout session. Body: `{ items: [{ id, quantity, variant? }], buyer?, fulfillment_details? }`. `items[].id` is the product's numeric ID or slug (use `checkout_item_id` from the feed). Returns the full session object including `line_items`, `fulfillment_options` (standard/express/overnight), `totals`, `capabilities.payment.handlers`, and `messages`. Status is `not_ready_for_payment` until `fulfillment_details` (with `email` and `address`) is provided.
+
+- [POST /acp/checkout_sessions/:id](/acp/checkout_sessions/:id): **Update** a session — add or change `fulfillment_details`, `buyer`, or `selected_fulfillment_options`. Totals and shipping cost are recomputed automatically. Body may contain any or all of: `fulfillment_details: { name, email, phone_number, address: { line_one, line_two?, city, state, country, postal_code } }`, `selected_fulfillment_options: [{ option_id, type, item_ids? }]`, `buyer: { first_name, last_name, email }`. Returns full updated session. Status advances to `ready_for_payment` once address and email are present.
+
+- [GET /acp/checkout_sessions/:id](/acp/checkout_sessions/:id): **Retrieve** the current authoritative session state. No idempotency key needed. Required header: `API-Version: 2026-04-17`.
+
+- [POST /acp/checkout_sessions/:id/complete](/acp/checkout_sessions/:id/complete): **Complete** the session and place the order. Session must be `ready_for_payment`. Body: `{ buyer?, payment_data: { handler_id: "card_tokenized", instrument: { type: "card", credential: { type: "spt", token: "<spt_...>" } }, billing_address? } }`. On success, returns `status: "completed"` and an `order` object with `id`, `order_number`, `permalink_url`, `grand_total_cents`, `grand_total_display`, `status: "paid"`, and `payment.last_four`. The order is persisted to the database and viewable at `/order/:id`.
+
+- [POST /acp/checkout_sessions/:id/cancel](/acp/checkout_sessions/:id/cancel): **Cancel** an open session. Completed sessions cannot be canceled. Body may be empty `{}`. Returns updated session with `status: "canceled"`.
+
+### ACP Fulfillment Options
+
+Three shipping options are always offered:
+
+| id | title | carrier | Cost |
+|----|-------|---------|------|
+| `shipping_standard` | Standard Shipping (5–7 days) | USPS | Free if order ≥ $50, else $9.99 |
+| `shipping_express` | Express Shipping (2–3 days) | UPS | $14.99 |
+| `shipping_overnight` | Overnight Shipping (next day) | FedEx | $29.99 |
+
+### ACP End-to-End Purchase Flow
+
+```
+1. GET  /.well-known/acp                          → discover endpoints
+2. GET  /acp/feed                                 → ingest full catalog (get checkout_item_id per product)
+3. GET  /acp/products?q=<query>                   → optional: search/filter
+4. GET  /acp/products/:id                         → inspect specific product
+5. POST /acp/psp/tokens                           → get Shared Payment Token (spt_...)
+       body: { card: { number, exp_month, exp_year, cvc } }
+6. POST /acp/checkout_sessions                    → create session
+       body: { items: [{ id: "<checkout_item_id>", quantity: 1 }] }
+       headers: API-Version + Idempotency-Key
+7. POST /acp/checkout_sessions/:id               → add buyer address (moves to ready_for_payment)
+       body: { fulfillment_details: { name, email, address: {...} },
+               selected_fulfillment_options: [{ option_id: "shipping_standard", type: "shipping" }] }
+8. GET  /acp/checkout_sessions/:id               → confirm totals and status
+9. POST /acp/checkout_sessions/:id/complete      → pay and place order
+       body: { payment_data: { handler_id: "card_tokenized",
+                               instrument: { type: "card",
+                                             credential: { type: "spt", token: "spt_..." } } } }
+10. Store order.order_number and order.permalink_url from response
+```
+
+### ACP Error Format
+
+All ACP errors follow a flat structure:
+```json
+{ "type": "invalid_request|processing_error|service_unavailable",
+  "code": "idempotency_key_required|idempotency_conflict|idempotency_in_flight|missing|invalid|out_of_stock|not_found|unsupported_api_version|missing_api_version|payment_declined|internal",
+  "message": "Human-readable explanation",
+  "param": "$.path.to.field"  }
+```
+
+## Brands Carried
+
+Nike, Adidas, Converse, New Balance, Timberland, Vans, Puma, ASICS, UrbanThread, Ralph Lauren (Polo), Levi's, Tommy Hilfiger, H&M, Under Armour, Uniqlo, Apple, Samsung, Google, OnePlus, Nothing, Anker, Ray-Ban, Sony, JBL, Logitech
+
+## Store Policies
+
+- Prices in USD. All 28 products in stock (quantity: 100 each).
+- Free shipping on orders $50 or more; $9.99 flat shipping on orders under $50.
+- 30-day no-questions-asked returns on all items.
+- No account, registration, or login required at any step — browse, search, and purchase as a guest.
+- Currency: USD. Locale: en-US.
+
+## SEO & Discovery Endpoints
+
+- [Sitemap](/sitemap.xml): XML sitemap listing homepage, catalog, all 4 category pages, and all 28 product pages with lastmod dates.
+- [robots.txt](/robots.txt): Allows all crawlers. Points to sitemap.
+- [Health Check](/_health): `{ status: "ok", timestamp }` — database-backed liveness probe.

@@ -1,4 +1,4 @@
-<%- include('partials/head', { title, description, baseUrl, product: null, currentCategory: typeof currentCategory !== 'undefined' ? currentCategory : null }) %>
+<%- include('partials/head', { title, description, baseUrl, product: null, currentCategory: typeof currentCategory !== 'undefined' ? currentCategory : null, noindex: typeof noindex !== 'undefined' ? noindex : false }) %>
 <body>
 <%- include('partials/header', { categories, searchQuery: typeof searchQuery !== 'undefined' ? searchQuery : (filters.q || '') }) %>
 

@@ -1,12 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<%
+  const hasProduct = typeof product !== 'undefined' && product;
+  const hasCategory = typeof currentCategory !== 'undefined' && currentCategory;
+  const isNoindex = typeof noindex !== 'undefined' && noindex;
+
+  let pageUrl = baseUrl;
+  if (hasProduct) pageUrl = `${baseUrl}/product/${product.slug}`;
+  else if (hasCategory) pageUrl = `${baseUrl}/catalog/${currentCategory.slug}`;
+  if (typeof canonicalUrl !== 'undefined' && canonicalUrl) pageUrl = canonicalUrl;
+
+  const ogImage = hasProduct && product.image_url ? product.image_url : `${baseUrl}/images/placeholder.svg`;
+  const ogImageSize = hasProduct && product.image_url ? 600 : 400;
+%>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= title %></title>
   <meta name="description" content="<%= description %>">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="<%= isNoindex ? 'noindex, follow' : 'index, follow' %>">
+  <link rel="service-desc" href="/openapi.json" type="application/json" title="AI Shop OpenAPI Spec">
+  <!-- Canonical -->
+  <link rel="canonical" href="<%= pageUrl %>">
 
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="Shop">
+  <meta property="og:type" content="<%= hasProduct ? 'product' : 'website' %>">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:title" content="<%= title %>">
+  <meta property="og:description" content="<%= description %>">
+  <meta property="og:url" content="<%= pageUrl %>">
+  <meta property="og:image" content="<%= ogImage %>">
+  <meta property="og:image:width" content="<%= ogImageSize %>">
+  <meta property="og:image:height" content="<%= ogImageSize %>">
+  <% if (hasProduct) { %>
+  <meta property="og:image:alt" content="<%= product.name %>">
+  <meta property="product:price:amount" content="<%= product.price %>">
+  <meta property="product:price:currency" content="USD">
+  <meta property="product:availability" content="<%= product.in_stock ? 'in stock' : 'out of stock' %>">
+  <% if (product.brand) { %>
+  <meta property="product:brand" content="<%= product.brand %>">
+  <% } %>
+  
   <!-- JSON-LD for AI + search engines -->
   <% if (typeof product !== 'undefined' && product) {
     var _attrs = (product.attributes && typeof product.attributes === 'object') ? product.attributes : {};
@@ -49,7 +84,14 @@
   %>
   <script type="application/ld+json"><%- JSON.stringify(_ld) %></script>
   <% } %>
-
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xc0f6ppxeg");
+  </script>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="preconnect" href="https://images.unsplash.com">
+  <meta name="google-site-verification" content="C4sgDIj2KneLidomhjFXbUJGE04KjPM2wSv_2JqCHBk">
 </head>
