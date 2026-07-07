@@ -20,7 +20,6 @@
   <meta name="description" content="<%= description %>">
   <meta name="robots" content="<%= isNoindex ? 'noindex, follow' : 'index, follow' %>">
   <link rel="service-desc" href="/openapi.json" type="application/json" title="AI Shop OpenAPI Spec">
-
   <!-- Canonical -->
   <link rel="canonical" href="<%= pageUrl %>">
 
@@ -42,6 +41,48 @@
   <% if (product.brand) { %>
   <meta property="product:brand" content="<%= product.brand %>">
   <% } %>
+  
+  <!-- JSON-LD for AI + search engines -->
+  <% if (typeof product !== 'undefined' && product) {
+    var _attrs = (product.attributes && typeof product.attributes === 'object') ? product.attributes : {};
+    var _addlProps = [];
+    Object.entries(_attrs).forEach(function(pair) {
+      var k = pair[0], v = pair[1];
+      (Array.isArray(v) ? v : [v]).forEach(function(val) {
+        _addlProps.push({ '@type': 'PropertyValue', name: k, value: String(val) });
+      });
+    });
+    var _ld = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.name,
+      description: product.short_description || '',
+      image: product.image_url,
+      sku: product.sku || '',
+      category: product.category_name || '',
+      brand: { '@type': 'Brand', name: product.brand || '' },
+      offers: {
+        '@type': 'Offer',
+        url: baseUrl + '/product/' + product.slug,
+        priceCurrency: 'USD',
+        price: String(product.price),
+        availability: product.in_stock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+        itemCondition: 'https://schema.org/NewCondition'
+      }
+    };
+    if (product.tags && product.tags.length) _ld.keywords = product.tags.join(', ');
+    if (_addlProps.length) _ld.additionalProperty = _addlProps;
+    if (product.review_count > 0) {
+      _ld.aggregateRating = {
+        '@type': 'AggregateRating',
+        ratingValue: String(product.rating),
+        reviewCount: product.review_count,
+        bestRating: '5',
+        worstRating: '1'
+      };
+    }
+  %>
+  <script type="application/ld+json"><%- JSON.stringify(_ld) %></script>
   <% } %>
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
