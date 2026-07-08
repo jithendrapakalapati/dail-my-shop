@@ -93,6 +93,7 @@ function resolveSort(sort) {
 
 // ── Agentic Commerce Protocol (ACP) v2026-04-17 ───────────────────────────────
 app.use('/acp', require('./routes/acp'));
+app.use('/api/ai-commerce', require('./routes/ai-commerce'));
 
 // ── API ───────────────────────────────────────────────────────────────────────
 
@@ -175,6 +176,94 @@ app.get('/api/search', async (req, res) => {
   }
 });
 
+// GET /api/feed - complete schema.org product feed for AI agents and crawlers
+app.get('/api/feed', async (req, res) => {
+  try {
+    const [productsRes, categoriesRes] = await Promise.all([
+      pool.query(`
+        SELECT p.*, c.name AS category_name, c.slug AS category_slug, c.icon AS category_icon
+        FROM shop_products p
+        LEFT JOIN shop_categories c ON p.category_id = c.id
+        ORDER BY p.category_id, p.name
+      `),
+      pool.query(`
+        SELECT c.*, COUNT(p.id)::int AS product_count
+        FROM shop_categories c
+        LEFT JOIN shop_products p ON p.category_id = c.id
+        GROUP BY c.id
+        ORDER BY c.sort_order, c.name
+      `),
+    ]);
+
+    res.json({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'AI Shop Product Catalog',
+      description: 'Complete product catalog for AI shopping assistants, crawlers, and developers.',
+      url: `${BASE_URL}/api/feed`,
+      numberOfItems: productsRes.rows.length,
+      itemListElement: productsRes.rows.map((p, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Product',
+          '@id': `${BASE_URL}/product/${p.slug}`,
+          name: p.name,
+          description: p.description || p.short_description || '',
+          brand: { '@type': 'Brand', name: p.brand || '' },
+          sku: p.sku || '',
+          image: p.image_url || '',
+          url: `${BASE_URL}/product/${p.slug}`,
+          category: p.category_name || '',
+          offers: {
+            '@type': 'Offer',
+            price: parseFloat(p.price),
+            priceCurrency: 'USD',
+            availability: p.in_stock ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            itemCondition: 'https://schema.org/NewCondition',
+            url: `${BASE_URL}/product/${p.slug}`,
+          },
+          ...(parseInt(p.review_count, 10) > 0 ? {
+            aggregateRating: {
+              '@type': 'AggregateRating',
+              ratingValue: parseFloat(p.rating),
+              reviewCount: parseInt(p.review_count, 10),
+              bestRating: 5,
+              worstRating: 1,
+            },
+          } : {}),
+          ...(p.tags && p.tags.length ? { keywords: p.tags.join(', ') } : {}),
+          ...(p.attributes && Object.keys(p.attributes).length ? {
+            additionalProperty: Object.entries(p.attributes).flatMap(([name, value]) =>
+              (Array.isArray(value) ? value : [value]).map(v => ({
+                '@type': 'PropertyValue',
+                name,
+                value: String(v),
+              }))
+            ),
+          } : {}),
+        },
+      })),
+      categories: categoriesRes.rows.map(c => ({
+        name: c.name,
+        slug: c.slug,
+        icon: c.icon,
+        url: `${BASE_URL}/catalog/${c.slug}`,
+        productCount: parseInt(c.product_count, 10) || 0,
+      })),
+      merchant: {
+        name: 'AI Shop',
+        url: BASE_URL,
+        currency: 'USD',
+        locale: 'en-US',
+      },
+      generatedAt: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error('GET /api/feed error:', err.message);
+    res.status(500).json({ error: 'Feed generation failed' });
+  }
+});
 // GET /openapi.json — OpenAPI 3.1 specification
 app.get('/openapi.json', (req, res) => {
   res.json({
@@ -896,3 +985,5 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+
