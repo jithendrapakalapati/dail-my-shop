@@ -217,15 +217,10 @@ function saveIdempotent(req, statusCode, body) {
 
 // ── Middleware ────────────────────────────────────────────────────────────────
 
-/** Validate that the client sent a supported API-Version header */
+/** Validate the client's API-Version header, if one was sent */
 function mwVersion(req, res, next) {
   const v = req.headers['api-version'];
-  if (!v) {
-    return res.status(400).json(acpError(
-      'invalid_request', 'missing_api_version',
-      `The API-Version header is required. Supported versions: ${SUPPORTED_VERSIONS.join(', ')}.`
-    ));
-  }
+  if (!v) return next();
   if (!SUPPORTED_VERSIONS.includes(v)) {
     return res.status(400).json({
       ...acpError('invalid_request', 'unsupported_api_version',
@@ -236,15 +231,10 @@ function mwVersion(req, res, next) {
   next();
 }
 
-/** Enforce Idempotency-Key on all POST requests (spec §6) */
+/** Apply Idempotency-Key replay/conflict handling when the client sends one */
 function mwIdempotency(req, res, next) {
   const key = req.headers['idempotency-key'];
-  if (!key) {
-    return res.status(400).json(acpError(
-      'invalid_request', 'idempotency_key_required',
-      'The Idempotency-Key header is required on all POST requests.'
-    ));
-  }
+  if (!key) return next();
   if (key.length > 255) {
     return res.status(400).json(acpError(
       'invalid_request', 'invalid',
@@ -429,8 +419,8 @@ router.get('/products', GET_MW, async (req, res) => {
          LEFT JOIN shop_categories c ON p.category_id = c.id
          ${where}
          ORDER BY p.is_featured DESC, p.rating DESC, p.name ASC
-         LIMIT ${bind(limitNum)} OFFSET ${bind(offset)}`,
-        params
+         LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+        [...params, limitNum, offset]
       ),
     ]);
 
@@ -475,6 +465,7 @@ router.get('/products', GET_MW, async (req, res) => {
       }),
     });
   } catch (err) {
+    console.error('GET /acp/products error:', err.message);
     res.status(503).json(acpError('service_unavailable', 'internal', 'Product fetch failed.'));
   }
 });
